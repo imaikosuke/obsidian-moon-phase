@@ -139,41 +139,77 @@ class MoonAgeModal extends Modal {
 	onOpen() {
 		const {contentEl} = this;
 		contentEl.empty();
+		contentEl.addClass('moon-phase-modal-content');
 
 		const emoji = getPhaseEmoji(this.moonInfo.phase);
 		const phaseName = getPhaseName(this.moonInfo.phase);
 
-		contentEl.createEl('h2', { text: t('modal.title', this.settings.language) });
+		// ヘッダーセクション
+		const headerSection = contentEl.createDiv('moon-phase-modal-header');
+		headerSection.createEl('h2', { 
+			text: t('modal.title', this.settings.language),
+			cls: 'moon-phase-modal-title'
+		});
 
-		const infoDiv = contentEl.createDiv();
-		infoDiv.createEl('p', { 
-			text: `${emoji} ${phaseName}`,
-			cls: 'moon-phase-emoji-text'
-		});
-		infoDiv.createEl('p', { 
-			text: `${t('modal.age', this.settings.language)}: ${this.moonInfo.age} days` 
-		});
-		infoDiv.createEl('p', { 
-			text: `${t('modal.illumination', this.settings.language)}: ${this.moonInfo.illumination}%` 
-		});
+		// ダッシュボードグリッドコンテナ（縦3行）
+		const dashboardGrid = contentEl.createDiv('moon-phase-dashboard-grid');
+
+		// 上行：現在の月齢（月相表示）
+		const topRow = dashboardGrid.createDiv('moon-phase-row moon-phase-top-row');
+		const emojiContainer = topRow.createDiv('moon-phase-emoji-container');
+		const emojiEl = emojiContainer.createDiv('moon-phase-emoji-large');
+		emojiEl.textContent = emoji;
+		const phaseNameEl = topRow.createDiv('moon-phase-name');
+		phaseNameEl.textContent = phaseName;
+
+		// 中央行：AGEとILLUMINATION（横2列）
+		const centerRow = dashboardGrid.createDiv('moon-phase-row moon-phase-center-row');
+		
+		// AGEカード
+		const ageCard = centerRow.createDiv('moon-phase-stat-card');
+		ageCard.createDiv('moon-phase-stat-label').textContent = t('modal.age', this.settings.language);
+		const ageValue = ageCard.createDiv('moon-phase-stat-value');
+		ageValue.textContent = `${this.moonInfo.age.toFixed(2)} days`;
+
+		// ILLUMINATIONカード（進捗バー付き）
+		const illuminationCard = centerRow.createDiv('moon-phase-stat-card');
+		illuminationCard.createDiv('moon-phase-stat-label').textContent = t('modal.illumination', this.settings.language);
+		const illuminationValue = illuminationCard.createDiv('moon-phase-stat-value');
+		illuminationValue.textContent = `${this.moonInfo.illumination.toFixed(1)}%`;
+		const progressBar = illuminationCard.createDiv('moon-phase-progress-container');
+		const progressFill = progressBar.createDiv('moon-phase-progress-fill');
+		progressFill.style.width = `${this.moonInfo.illumination}%`;
+
 		// タイムゾーンを考慮した日時表示
 		const nextNewMoonStr = formatDateInTimezone(this.moonInfo.nextNewMoon, this.settings.timezone);
 		const nextFullMoonStr = formatDateInTimezone(this.moonInfo.nextFullMoon, this.settings.timezone);
 		
-		infoDiv.createEl('p', { 
-			text: `${t('modal.next-new-moon', this.settings.language)}: ${nextNewMoonStr}` 
-		});
-		infoDiv.createEl('p', { 
-			text: `${t('modal.next-full-moon', this.settings.language)}: ${nextFullMoonStr}` 
-		});
+		// 3行目：NEXT NEW MOON（1列目）
+		const newMoonRow = dashboardGrid.createDiv('moon-phase-row moon-phase-event-row');
+		const newMoonCard = newMoonRow.createDiv('moon-phase-event-card');
+		newMoonCard.createDiv('moon-phase-event-icon').textContent = '🌑';
+		const newMoonInfo = newMoonCard.createDiv('moon-phase-event-info');
+		newMoonInfo.createDiv('moon-phase-event-label').textContent = t('modal.next-new-moon', this.settings.language);
+		newMoonInfo.createDiv('moon-phase-event-date').textContent = nextNewMoonStr;
 
-		// 半球情報を表示
+		// 4行目：NEXT FULL MOON（2列目）
+		const fullMoonRow = dashboardGrid.createDiv('moon-phase-row moon-phase-event-row');
+		const fullMoonCard = fullMoonRow.createDiv('moon-phase-event-card');
+		fullMoonCard.createDiv('moon-phase-event-icon').textContent = '🌕';
+		const fullMoonInfo = fullMoonCard.createDiv('moon-phase-event-info');
+		fullMoonInfo.createDiv('moon-phase-event-label').textContent = t('modal.next-full-moon', this.settings.language);
+		fullMoonInfo.createDiv('moon-phase-event-date').textContent = nextFullMoonStr;
+
+		// 5行目：HEMISPHERE（3列目）
 		const tzInfo = getTimezoneInfo(this.settings.timezone);
 		if (tzInfo) {
 			const hemisphere = tzInfo.hemisphere === 'north' ? t('modal.hemisphere-north', this.settings.language) : t('modal.hemisphere-south', this.settings.language);
-			infoDiv.createEl('p', { 
-				text: `${t('modal.hemisphere', this.settings.language)}: ${hemisphere}` 
-			});
+			const hemisphereRow = dashboardGrid.createDiv('moon-phase-row moon-phase-event-row');
+			const hemisphereCard = hemisphereRow.createDiv('moon-phase-event-card');
+			hemisphereCard.createDiv('moon-phase-event-icon').textContent = '🌍';
+			const hemisphereInfo = hemisphereCard.createDiv('moon-phase-event-info');
+			hemisphereInfo.createDiv('moon-phase-event-label').textContent = t('modal.hemisphere', this.settings.language);
+			hemisphereInfo.createDiv('moon-phase-event-date').textContent = hemisphere;
 		}
 	}
 
