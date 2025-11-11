@@ -44,6 +44,10 @@ export function getDateInTimezone(timezoneId: string): Date {
 		return new Date(year, month, day, hour, minute, second);
 	} catch (e) {
 		// エラーが発生した場合はシステム時刻を返す
+		// エラーの詳細はコンソールに記録（開発時のみ）
+		if (typeof console !== 'undefined' && console.error) {
+			console.error('Error getting date in timezone:', e);
+		}
 		return new Date();
 	}
 }
@@ -75,7 +79,17 @@ export function formatDateInTimezone(date: Date, timezoneId: string): string {
 			second: '2-digit'
 		});
 	} catch (e) {
-		return date.toLocaleString();
+		// エラーが発生した場合はデフォルトのロケール文字列を返す
+		// エラーの詳細はコンソールに記録（開発時のみ）
+		if (typeof console !== 'undefined' && console.error) {
+			console.error('Error formatting date in timezone:', e);
+		}
+		try {
+			return date.toLocaleString();
+		} catch (fallbackError) {
+			// フォールバックも失敗した場合は、ISO文字列を返す
+			return date.toISOString();
+		}
 	}
 }
 

@@ -31,7 +31,7 @@ export default class MoonPhasePlugin extends Plugin {
 		// 月齢ビューを登録
 		this.registerView(
 			MOON_AGE_VIEW_TYPE,
-			(leaf) => new MoonAgeView(leaf)
+			(leaf) => new MoonAgeView(leaf, this, this.settings)
 		);
 
 		// 月齢を表示するコマンド
@@ -128,6 +128,21 @@ export default class MoonPhasePlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+		// 設定変更時に開いているビューを更新
+		this.updateAllViews();
+	}
+
+	/**
+	 * 開いているすべてのビューを更新
+	 */
+	updateAllViews() {
+		const leaves = this.app.workspace.getLeavesOfType(MOON_AGE_VIEW_TYPE);
+		leaves.forEach(leaf => {
+			const view = leaf.view as MoonAgeView;
+			if (view && typeof view.updateSettings === 'function') {
+				view.updateSettings(this.settings);
+			}
+		});
 	}
 }
 
@@ -210,7 +225,8 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.showStatusBar)
 				.onChange(async (value) => {
 					this.plugin.settings.showStatusBar = value;
-					await this.plugin.saveSettings();
+					await this.plugin.saveData(this.plugin.settings);
+					this.plugin.updateAllViews();
 					
 					// ステータスバーの表示/非表示を切り替え
 					if (value && !this.plugin.statusBarItemEl) {
@@ -231,8 +247,9 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.showPercentage)
 				.onChange(async (value) => {
 					this.plugin.settings.showPercentage = value;
-					await this.plugin.saveSettings();
+					await this.plugin.saveData(this.plugin.settings);
 					this.plugin.updateStatusBar();
+					this.plugin.updateAllViews();
 				}));
 
 		// 更新間隔の設定
@@ -246,8 +263,9 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 					const interval = parseInt(value);
 					if (!isNaN(interval) && interval > 0) {
 						this.plugin.settings.updateInterval = interval;
-						await this.plugin.saveSettings();
+						await this.plugin.saveData(this.plugin.settings);
 						this.plugin.startUpdateInterval();
+						this.plugin.updateAllViews();
 					}
 				}));
 
@@ -264,8 +282,9 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 				dropdown.setValue(this.plugin.settings.timezone);
 				dropdown.onChange(async (value) => {
 					this.plugin.settings.timezone = value;
-					await this.plugin.saveSettings();
+					await this.plugin.saveData(this.plugin.settings);
 					this.plugin.updateStatusBar();
+					this.plugin.updateAllViews();
 				});
 			});
 	}
