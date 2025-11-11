@@ -16,11 +16,10 @@ Display moon phase information in Obsidian with accurate calculations based on a
 - **Ribbon Icon**: Click the moon icon in the left sidebar to open the moon age modal
 - **Status Bar**: Display moon phase with emoji, percentage, and phase name
 - **Moon Age View**: Display moon phase emoji in the right sidebar
-- **Moon Age Modal**: Shows detailed information including:
-  - Moon phase emoji and name
-  - Illumination percentage
-  - Moon age (in days)
-  - Next new moon and full moon dates
+- **Moon Age Modal**: Shows detailed information in a dashboard layout:
+  - Moon phase emoji and name (top row)
+  - Moon age and illumination percentage with progress bar (center row, 2 columns)
+  - Next new moon and full moon dates (event rows)
   - Hemisphere information (Northern/Southern)
 
 ### Commands
@@ -30,14 +29,15 @@ Display moon phase information in Obsidian with accurate calculations based on a
 ### Settings
 - Toggle status bar display on/off
 - Toggle percentage display on/off
-- Configure update interval (in minutes, default: 60 minutes)
+- Language selection (Auto, Japanese, English)
 - Timezone/location selection:
-  - Support for 20+ countries and regions
+  - Support for 17 timezones (including system default)
   - Use system default timezone
   - Automatic hemisphere detection based on timezone
 
 ### Internationalization
-- Automatic language detection (uses `navigator.language`)
+- Automatic language detection (uses Obsidian's `moment.locale()`)
+- Manual language selection: Auto, Japanese, or English
 - Supports Japanese and English
 - Translated elements:
   - Command names
@@ -46,31 +46,28 @@ Display moon phase information in Obsidian with accurate calculations based on a
   - Modal text
   - Moon phase names
   - View names
-  - Timezone selection "System Default" display
+  - Timezone selection display (all timezone names are translated)
 
 ### Timezone Support
-Supports 20+ countries and regions including:
+Supports 17 timezones including:
+- System Default
 - Japan
-- United States (Eastern, Central, Mountain, Pacific)
+- United States (Eastern)
 - United Kingdom
 - Germany
 - France
-- Australia (Sydney, Melbourne)
+- Australia (Sydney)
 - China
 - India
 - Brazil (São Paulo)
-- Canada (Toronto, Vancouver)
+- Canada (Toronto)
 - Mexico
 - Korea
 - Singapore
 - New Zealand
 - South Africa
 - Russia (Moscow)
-- And more...
 
-### Auto-Update
-- Automatically updates moon phase information at configured intervals
-- Updates UI elements (ribbon, status bar, view) automatically
 
 ## How to Use
 
@@ -89,7 +86,7 @@ Supports 20+ countries and regions including:
 Go to **Settings → Moon Phase** to configure:
 - **Show Status Bar**: Toggle moon phase display in the status bar
 - **Show Percentage**: Toggle illumination percentage display
-- **Update Interval**: Set how often the moon phase information is updated (in minutes)
+- **Language**: Select display language (Auto, Japanese, or English)
 - **Timezone**: Select your timezone or use system default
 
 ## Development
