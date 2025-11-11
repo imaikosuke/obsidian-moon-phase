@@ -1,6 +1,6 @@
 import { ItemView, WorkspaceLeaf, Plugin } from 'obsidian';
 import { calculateMoonAge } from '../utils/moonCalculation';
-import { getPhaseEmoji, getPhaseName } from '../utils/moonPhaseUtils';
+import { getPhaseEmoji } from '../utils/moonPhaseUtils';
 import { t } from '../utils/i18n';
 import { MoonPhasePluginSettings } from '../settings';
 import { getDateInTimezone } from '../utils/timezoneUtils';
@@ -70,33 +70,21 @@ export class MoonAgeView extends ItemView {
 	updateDisplay() {
 		const { contentEl } = this;
 		contentEl.empty();
+		contentEl.style.display = 'flex';
+		contentEl.style.alignItems = 'center';
+		contentEl.style.justifyContent = 'center';
+		contentEl.style.height = '100%';
 
 		// タイムゾーンを考慮した日時で月齢を計算
 		const date = getDateInTimezone(this.settings.timezone);
 		const moonInfo = calculateMoonAge(date);
 		const emoji = getPhaseEmoji(moonInfo.phase);
-		const phaseName = getPhaseName(moonInfo.phase);
 
-		// 月相絵文字を大きく表示
+		// 月相絵文字だけを大きく表示
 		const emojiEl = contentEl.createDiv('moon-phase-emoji');
-		emojiEl.style.fontSize = '4em';
+		emojiEl.style.fontSize = '8em';
 		emojiEl.style.textAlign = 'center';
-		emojiEl.style.padding = '20px';
 		emojiEl.textContent = emoji;
-
-		// 月相名を表示
-		const nameEl = contentEl.createDiv('moon-phase-name');
-		nameEl.style.textAlign = 'center';
-		nameEl.style.fontSize = '1.2em';
-		nameEl.style.fontWeight = 'bold';
-		nameEl.textContent = phaseName;
-
-		// 月齢情報を表示
-		const infoEl = contentEl.createDiv('moon-phase-info');
-		infoEl.style.textAlign = 'center';
-		infoEl.style.padding = '10px';
-		infoEl.createEl('p', { text: `${t('modal.age')}: ${moonInfo.age} days` });
-		infoEl.createEl('p', { text: `${t('modal.illumination')}: ${moonInfo.illumination}%` });
 	}
 
 }
