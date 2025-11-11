@@ -1,3 +1,5 @@
+import { moment } from 'obsidian';
+
 /**
  * 言語コード
  */
@@ -80,10 +82,24 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 
 /**
  * 現在の言語を取得
+ * Obsidianの現在の言語（ロケール）は moment.locale() で取得できます
  */
 export function getCurrentLanguage(): Language {
-	const lang = navigator.language.split('-')[0];
-	return lang === 'ja' ? 'ja' : 'en';
+	try {
+		// Obsidianの現在の言語を取得
+		const locale = moment.locale();
+		const lang = locale.split('-')[0].toLowerCase();
+		
+		if (lang === 'ja') {
+			return 'ja';
+		}
+	} catch (e) {
+		// エラーが発生した場合は英語固定
+		return 'en';
+	}
+	
+	// デフォルトは英語
+	return 'en';
 }
 
 /**
