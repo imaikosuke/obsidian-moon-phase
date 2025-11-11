@@ -1,8 +1,11 @@
-/*
+.moon-phase-emoji {
+	filter: saturate(0.1);
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+.moon-phase-status-bar {
+	filter: saturate(0.1);
+}
 
-If your plugin does not need CSS, delete this file.
-
-*/
+.moon-phase-emoji-text {
+	filter: saturate(0.1);
+}

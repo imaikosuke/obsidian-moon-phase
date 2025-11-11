@@ -25,6 +25,7 @@ export default class MoonPhasePlugin extends Plugin {
 		// ステータスバーに月齢を表示（設定に基づく）
 		if (this.settings.showStatusBar) {
 			this.statusBarItemEl = this.addStatusBarItem();
+			this.statusBarItemEl.addClass('moon-phase-status-bar');
 			this.updateStatusBar();
 		}
 
@@ -167,7 +168,8 @@ class MoonAgeModal extends Modal {
 
 		const infoDiv = contentEl.createDiv();
 		infoDiv.createEl('p', { 
-			text: `${emoji} ${phaseName}` 
+			text: `${emoji} ${phaseName}`,
+			cls: 'moon-phase-emoji-text'
 		});
 		infoDiv.createEl('p', { 
 			text: `${t('modal.age')}: ${this.moonInfo.age} days` 
@@ -231,6 +233,7 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 					// ステータスバーの表示/非表示を切り替え
 					if (value && !this.plugin.statusBarItemEl) {
 						this.plugin.statusBarItemEl = this.plugin.addStatusBarItem();
+						this.plugin.statusBarItemEl.addClass('moon-phase-status-bar');
 						this.plugin.updateStatusBar();
 					} else if (!value && this.plugin.statusBarItemEl) {
 						this.plugin.statusBarItemEl.setText('');
