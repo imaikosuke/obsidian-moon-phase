@@ -21,6 +21,7 @@ export type TranslationKey =
 	| 'settings.timezone-desc'
 	| 'modal.title'
 	| 'modal.age'
+	| 'modal.age-unit'
 	| 'modal.illumination'
 	| 'modal.next-new-moon'
 	| 'modal.next-full-moon'
@@ -50,6 +51,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'settings.timezone-desc': 'タイムゾーンを選択してください',
 		'modal.title': '月の情報',
 		'modal.age': '月齢',
+		'modal.age-unit': '日',
 		'modal.illumination': '明るさ',
 		'modal.next-new-moon': '次の新月',
 		'modal.next-full-moon': '次の満月',
@@ -75,6 +77,7 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'settings.timezone-desc': 'Select your timezone',
 		'modal.title': 'Moon Information',
 		'modal.age': 'Age',
+		'modal.age-unit': 'days',
 		'modal.illumination': 'Brightness',
 		'modal.next-new-moon': 'Next New Moon',
 		'modal.next-full-moon': 'Next Full Moon',

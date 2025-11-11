@@ -169,7 +169,7 @@ class MoonAgeModal extends Modal {
 		const ageCard = centerRow.createDiv('moon-phase-stat-card');
 		ageCard.createDiv('moon-phase-stat-label').textContent = t('modal.age', this.settings.language);
 		const ageValue = ageCard.createDiv('moon-phase-stat-value');
-		ageValue.textContent = `${this.moonInfo.age.toFixed(2)} days`;
+		ageValue.textContent = `${this.moonInfo.age.toFixed(2)} ${t('modal.age-unit', this.settings.language)}`;
 
 		// ILLUMINATIONカード（進捗バー付き）
 		const illuminationCard = centerRow.createDiv('moon-phase-stat-card');
@@ -180,9 +180,9 @@ class MoonAgeModal extends Modal {
 		const progressFill = progressBar.createDiv('moon-phase-progress-fill');
 		progressFill.style.width = `${this.moonInfo.illumination}%`;
 
-		// タイムゾーンを考慮した日時表示
-		const nextNewMoonStr = formatDateInTimezone(this.moonInfo.nextNewMoon, this.settings.timezone);
-		const nextFullMoonStr = formatDateInTimezone(this.moonInfo.nextFullMoon, this.settings.timezone);
+		// タイムゾーンを考慮した日時表示（言語設定とタイムゾーン設定に応じたフォーマット）
+		const nextNewMoonStr = formatDateInTimezone(this.moonInfo.nextNewMoon, this.settings.timezone, this.settings.language);
+		const nextFullMoonStr = formatDateInTimezone(this.moonInfo.nextFullMoon, this.settings.timezone, this.settings.language);
 		
 		// 3行目：NEXT NEW MOON（1列目）
 		const newMoonRow = dashboardGrid.createDiv('moon-phase-row moon-phase-event-row');
