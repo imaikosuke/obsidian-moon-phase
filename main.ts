@@ -10,7 +10,6 @@ import { t } from './src/utils/i18n';
 export default class MoonPhasePlugin extends Plugin {
 	settings: MoonPhasePluginSettings;
 	statusBarItemEl: HTMLElement | null = null;
-	updateIntervalId: number | null = null;
 
 	async onload() {
 		await this.loadSettings();
@@ -55,32 +54,12 @@ export default class MoonPhasePlugin extends Plugin {
 			}
 		});
 
-		// 設定された間隔でステータスバーを更新
-		this.startUpdateInterval();
-
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new MoonPhaseSettingTab(this.app, this));
 	}
 
 	onunload() {
-		// インターバルをクリーンアップ
-		this.stopUpdateInterval();
-	}
-
-	startUpdateInterval() {
-		this.stopUpdateInterval();
-		const intervalMs = this.settings.updateInterval * 60 * 1000;
-		// registerIntervalを使用すると、プラグインのアンロード時に自動的にクリーンアップされる
-		this.updateIntervalId = this.registerInterval(window.setInterval(() => {
-			this.updateStatusBar();
-		}, intervalMs));
-	}
-
-	stopUpdateInterval() {
-		if (this.updateIntervalId !== null) {
-			window.clearInterval(this.updateIntervalId);
-			this.updateIntervalId = null;
-		}
+		// クリーンアップ処理（必要に応じて追加）
 	}
 
 	updateStatusBar() {
@@ -253,23 +232,6 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 					await this.plugin.saveData(this.plugin.settings);
 					this.plugin.updateStatusBar();
 					this.plugin.updateAllViews();
-				}));
-
-		// 更新間隔の設定
-		new Setting(containerEl)
-			.setName(t('settings.update-interval'))
-			.setDesc(t('settings.update-interval-desc'))
-			.addText(text => text
-				.setPlaceholder('60')
-				.setValue(this.plugin.settings.updateInterval.toString())
-				.onChange(async (value) => {
-					const interval = parseInt(value);
-					if (!isNaN(interval) && interval > 0) {
-						this.plugin.settings.updateInterval = interval;
-						await this.plugin.saveData(this.plugin.settings);
-						this.plugin.startUpdateInterval();
-						this.plugin.updateAllViews();
-					}
 				}));
 
 		// タイムゾーン選択

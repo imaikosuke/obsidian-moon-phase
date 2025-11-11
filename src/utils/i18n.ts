@@ -15,8 +15,6 @@ export type TranslationKey =
 	| 'settings.show-status-bar-desc'
 	| 'settings.show-percentage'
 	| 'settings.show-percentage-desc'
-	| 'settings.update-interval'
-	| 'settings.update-interval-desc'
 	| 'settings.timezone'
 	| 'settings.timezone-desc'
 	| 'modal.title'
@@ -43,8 +41,6 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'settings.show-status-bar-desc': 'ステータスバーに月齢情報を表示します',
 		'settings.show-percentage': 'パーセンテージを表示',
 		'settings.show-percentage-desc': 'ステータスバーに照度パーセンテージを表示します',
-		'settings.update-interval': '更新間隔',
-		'settings.update-interval-desc': '更新間隔（分単位、デフォルト: 60分）',
 		'settings.timezone': 'タイムゾーン',
 		'settings.timezone-desc': 'タイムゾーンを選択してください',
 		'modal.title': '月齢情報',
@@ -67,8 +63,6 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'settings.show-status-bar-desc': 'Display moon phase information in the status bar',
 		'settings.show-percentage': 'Show percentage',
 		'settings.show-percentage-desc': 'Display illumination percentage in the status bar',
-		'settings.update-interval': 'Update interval',
-		'settings.update-interval-desc': 'Update interval in minutes (default: 60 minutes)',
 		'settings.timezone': 'Timezone',
 		'settings.timezone-desc': 'Select your timezone',
 		'modal.title': 'Moon Age Information',

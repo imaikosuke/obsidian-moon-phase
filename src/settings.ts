@@ -16,8 +16,6 @@ export interface MoonPhasePluginSettings {
 	showStatusBar: boolean;
 	/** パーセンテージ表示のON/OFF */
 	showPercentage: boolean;
-	/** 更新間隔（分単位） */
-	updateInterval: number;
 	/** 選択されたタイムゾーンID（'system'の場合はシステムデフォルト） */
 	timezone: string;
 }
@@ -28,7 +26,6 @@ export interface MoonPhasePluginSettings {
 export const DEFAULT_SETTINGS: MoonPhasePluginSettings = {
 	showStatusBar: true,
 	showPercentage: true,
-	updateInterval: 60,
 	timezone: 'system'
 };
 

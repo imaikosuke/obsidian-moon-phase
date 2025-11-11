@@ -8,7 +8,6 @@ import { getDateInTimezone } from '../utils/timezoneUtils';
 export const MOON_AGE_VIEW_TYPE = 'moon-age-view';
 
 export class MoonAgeView extends ItemView {
-	intervalId: number | null = null;
 	plugin: Plugin;
 	settings: MoonPhasePluginSettings;
 
@@ -32,28 +31,10 @@ export class MoonAgeView extends ItemView {
 
 	async onOpen() {
 		this.updateDisplay();
-		// 設定された間隔で更新
-		this.startUpdateInterval();
 	}
 
 	async onClose() {
-		this.stopUpdateInterval();
-	}
-
-	startUpdateInterval() {
-		this.stopUpdateInterval();
-		const intervalMs = this.settings.updateInterval * 60 * 1000;
-		// registerIntervalを使用すると、プラグインのアンロード時に自動的にクリーンアップされる
-		this.intervalId = this.plugin.registerInterval(window.setInterval(() => {
-			this.updateDisplay();
-		}, intervalMs));
-	}
-
-	stopUpdateInterval() {
-		if (this.intervalId !== null) {
-			window.clearInterval(this.intervalId);
-			this.intervalId = null;
-		}
+		// クリーンアップ処理（必要に応じて追加）
 	}
 
 	/**
@@ -61,8 +42,6 @@ export class MoonAgeView extends ItemView {
 	 */
 	updateSettings(newSettings: MoonPhasePluginSettings) {
 		this.settings = newSettings;
-		// 更新間隔が変更された場合は再設定
-		this.startUpdateInterval();
 		// 表示を更新
 		this.updateDisplay();
 	}
