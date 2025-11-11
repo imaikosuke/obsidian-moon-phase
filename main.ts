@@ -3,31 +3,29 @@ import { calculateMoonAge } from './src/utils/moonCalculation';
 import { MoonAgeInfo, MoonPhase } from './src/types';
 import { getPhaseEmoji, getPhaseName } from './src/utils/moonPhaseUtils';
 import { MoonAgeView, MOON_AGE_VIEW_TYPE } from './src/ui/MoonAgeView';
-
-interface MoonPhasePluginSettings {
-	mySetting: string;
-}
-
-const DEFAULT_SETTINGS: MoonPhasePluginSettings = {
-	mySetting: 'default'
-}
+import { MoonPhasePluginSettings, DEFAULT_SETTINGS, TIMEZONES, getTimezoneInfo } from './src/settings';
+import { getDateInTimezone, formatDateInTimezone } from './src/utils/timezoneUtils';
 
 export default class MoonPhasePlugin extends Plugin {
 	settings: MoonPhasePluginSettings;
 	statusBarItemEl: HTMLElement | null = null;
+	updateIntervalId: number | null = null;
 
 	async onload() {
 		await this.loadSettings();
 
 		// リボンアイコンを追加（左サイドバー）
 		this.addRibbonIcon('moon', 'Show moon age', (_evt: MouseEvent) => {
-			const moonInfo = calculateMoonAge();
-			new MoonAgeModal(this.app, moonInfo).open();
+			const date = getDateInTimezone(this.settings.timezone);
+			const moonInfo = calculateMoonAge(date);
+			new MoonAgeModal(this.app, moonInfo, this.settings).open();
 		});
 
-		// ステータスバーに月齢を表示
-		this.statusBarItemEl = this.addStatusBarItem();
-		this.updateStatusBar();
+		// ステータスバーに月齢を表示（設定に基づく）
+		if (this.settings.showStatusBar) {
+			this.statusBarItemEl = this.addStatusBarItem();
+			this.updateStatusBar();
+		}
 
 		// 月齢ビューを登録
 		this.registerView(
@@ -40,8 +38,9 @@ export default class MoonPhasePlugin extends Plugin {
 			id: 'show-moon-age',
 			name: 'Show moon age',
 			callback: () => {
-				const moonInfo = calculateMoonAge();
-				new MoonAgeModal(this.app, moonInfo).open();
+				const date = getDateInTimezone(this.settings.timezone);
+				const moonInfo = calculateMoonAge(date);
+				new MoonAgeModal(this.app, moonInfo, this.settings).open();
 			}
 		});
 
@@ -54,25 +53,49 @@ export default class MoonPhasePlugin extends Plugin {
 			}
 		});
 
-		// 1時間ごとにステータスバーを更新
-		this.registerInterval(window.setInterval(() => {
-			this.updateStatusBar();
-		}, 60 * 60 * 1000));
+		// 設定された間隔でステータスバーを更新
+		this.startUpdateInterval();
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new MoonPhaseSettingTab(this.app, this));
 	}
 
 	onunload() {
-		// registerIntervalを使用しているため、自動的にクリーンアップされる
+		// インターバルをクリーンアップ
+		this.stopUpdateInterval();
+	}
+
+	startUpdateInterval() {
+		this.stopUpdateInterval();
+		const intervalMs = this.settings.updateInterval * 60 * 1000;
+		// registerIntervalを使用すると、プラグインのアンロード時に自動的にクリーンアップされる
+		this.updateIntervalId = this.registerInterval(window.setInterval(() => {
+			this.updateStatusBar();
+		}, intervalMs));
+	}
+
+	stopUpdateInterval() {
+		if (this.updateIntervalId !== null) {
+			window.clearInterval(this.updateIntervalId);
+			this.updateIntervalId = null;
+		}
 	}
 
 	updateStatusBar() {
-		if (this.statusBarItemEl) {
-			const moonInfo = calculateMoonAge();
+		if (this.statusBarItemEl && this.settings.showStatusBar) {
+			const date = getDateInTimezone(this.settings.timezone);
+			const moonInfo = calculateMoonAge(date);
 			const emoji = getPhaseEmoji(moonInfo.phase);
 			const phaseName = getPhaseName(moonInfo.phase);
-			this.statusBarItemEl.setText(`${emoji} ${phaseName} (${moonInfo.illumination}%)`);
+			
+			let text = `${emoji} ${phaseName}`;
+			if (this.settings.showPercentage) {
+				text += ` (${moonInfo.illumination}%)`;
+			}
+			this.statusBarItemEl.setText(text);
+		} else if (this.statusBarItemEl && !this.settings.showStatusBar) {
+			// ステータスバーを非表示にする
+			this.statusBarItemEl.setText('');
 		}
 	}
 
@@ -109,10 +132,12 @@ export default class MoonPhasePlugin extends Plugin {
 
 class MoonAgeModal extends Modal {
 	moonInfo: MoonAgeInfo;
+	settings: MoonPhasePluginSettings;
 
-	constructor(app: App, moonInfo: MoonAgeInfo) {
+	constructor(app: App, moonInfo: MoonAgeInfo, settings: MoonPhasePluginSettings) {
 		super(app);
 		this.moonInfo = moonInfo;
+		this.settings = settings;
 	}
 
 	onOpen() {
@@ -134,12 +159,25 @@ class MoonAgeModal extends Modal {
 		infoDiv.createEl('p', { 
 			text: `Illumination: ${this.moonInfo.illumination}%` 
 		});
+		// タイムゾーンを考慮した日時表示
+		const nextNewMoonStr = formatDateInTimezone(this.moonInfo.nextNewMoon, this.settings.timezone);
+		const nextFullMoonStr = formatDateInTimezone(this.moonInfo.nextFullMoon, this.settings.timezone);
+		
 		infoDiv.createEl('p', { 
-			text: `Next New Moon: ${this.moonInfo.nextNewMoon.toLocaleString()}` 
+			text: `Next New Moon: ${nextNewMoonStr}` 
 		});
 		infoDiv.createEl('p', { 
-			text: `Next Full Moon: ${this.moonInfo.nextFullMoon.toLocaleString()}` 
+			text: `Next Full Moon: ${nextFullMoonStr}` 
 		});
+
+		// 半球情報を表示
+		const tzInfo = getTimezoneInfo(this.settings.timezone);
+		if (tzInfo) {
+			const hemisphere = tzInfo.hemisphere === 'north' ? 'Northern Hemisphere' : 'Southern Hemisphere';
+			infoDiv.createEl('p', { 
+				text: `Hemisphere: ${hemisphere}` 
+			});
+		}
 	}
 
 	onClose() {
@@ -161,15 +199,72 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
+		containerEl.createEl('h2', { text: 'Moon Phase Settings' });
+
+		// ステータスバー表示のON/OFF
 		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue(this.plugin.settings.mySetting)
+			.setName('Show status bar')
+			.setDesc('Display moon phase information in the status bar')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showStatusBar)
 				.onChange(async (value) => {
-					this.plugin.settings.mySetting = value;
+					this.plugin.settings.showStatusBar = value;
 					await this.plugin.saveSettings();
+					
+					// ステータスバーの表示/非表示を切り替え
+					if (value && !this.plugin.statusBarItemEl) {
+						this.plugin.statusBarItemEl = this.plugin.addStatusBarItem();
+						this.plugin.updateStatusBar();
+					} else if (!value && this.plugin.statusBarItemEl) {
+						this.plugin.statusBarItemEl.setText('');
+					} else if (value) {
+						this.plugin.updateStatusBar();
+					}
 				}));
+
+		// パーセンテージ表示のON/OFF
+		new Setting(containerEl)
+			.setName('Show percentage')
+			.setDesc('Display illumination percentage in the status bar')
+			.addToggle(toggle => toggle
+				.setValue(this.plugin.settings.showPercentage)
+				.onChange(async (value) => {
+					this.plugin.settings.showPercentage = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateStatusBar();
+				}));
+
+		// 更新間隔の設定
+		new Setting(containerEl)
+			.setName('Update interval')
+			.setDesc('Update interval in minutes (default: 60 minutes)')
+			.addText(text => text
+				.setPlaceholder('60')
+				.setValue(this.plugin.settings.updateInterval.toString())
+				.onChange(async (value) => {
+					const interval = parseInt(value);
+					if (!isNaN(interval) && interval > 0) {
+						this.plugin.settings.updateInterval = interval;
+						await this.plugin.saveSettings();
+						this.plugin.startUpdateInterval();
+					}
+				}));
+
+		// タイムゾーン選択
+		new Setting(containerEl)
+			.setName('Timezone')
+			.setDesc('Select your timezone')
+			.addDropdown(dropdown => {
+				TIMEZONES.forEach(tz => {
+					dropdown.addOption(tz.id, tz.name);
+				});
+				dropdown.setValue(this.plugin.settings.timezone);
+				dropdown.onChange(async (value) => {
+					this.plugin.settings.timezone = value;
+					await this.plugin.saveSettings();
+					this.plugin.updateStatusBar();
+				});
+			});
 	}
 }
+
