@@ -1,4 +1,5 @@
 import { MoonPhase } from '../types';
+import { getCurrentLanguage, Language } from './i18n';
 
 /**
  * 月相名のマッピング（英語・日本語）
@@ -31,13 +32,12 @@ export const phaseEmojis: Record<MoonPhase, string> = {
 /**
  * 言語に応じた月相名を取得
  * @param phase 月相
- * @param lang 言語（'ja' | 'en'、デフォルトは自動検出）
+ * @param lang 言語設定（'auto'の場合はObsidianの設定に従う、省略時は自動検出）
  * @returns 月相名
  */
-export function getPhaseName(phase: MoonPhase, lang?: string): string {
-	const detectedLang = lang || navigator.language.split('-')[0];
-	const isJapanese = detectedLang === 'ja';
-	return isJapanese ? phaseNames[phase].ja : phaseNames[phase].en;
+export function getPhaseName(phase: MoonPhase, lang?: 'auto' | 'ja' | 'en'): string {
+	const currentLang: Language = getCurrentLanguage(lang);
+	return phaseNames[phase][currentLang];
 }
 
 /**

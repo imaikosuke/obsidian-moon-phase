@@ -67,7 +67,7 @@ export default class MoonPhasePlugin extends Plugin {
 			const date = getDateInTimezone(this.settings.timezone);
 			const moonInfo = calculateMoonAge(date);
 			const emoji = getPhaseEmoji(moonInfo.phase);
-			const phaseName = getPhaseName(moonInfo.phase);
+			const phaseName = getPhaseName(moonInfo.phase, this.settings.language);
 			
 			let text = `${emoji} ${phaseName}`;
 			if (this.settings.showPercentage) {
@@ -142,7 +142,7 @@ class MoonAgeModal extends Modal {
 		contentEl.addClass('moon-phase-modal-content');
 
 		const emoji = getPhaseEmoji(this.moonInfo.phase);
-		const phaseName = getPhaseName(this.moonInfo.phase);
+		const phaseName = getPhaseName(this.moonInfo.phase, this.settings.language);
 
 		// ヘッダーセクション
 		const headerSection = contentEl.createDiv('moon-phase-modal-header');
