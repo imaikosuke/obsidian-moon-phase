@@ -99,17 +99,17 @@ The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definiti
 
 ### Prerequisites
 - Node.js v16 or higher
-- npm (comes with Node.js)
+- pnpm (install with `npm install -g pnpm`)
 
 ### Setup
 1. Clone this repository
 2. Install dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
 3. Start development in watch mode:
    ```bash
-   npm run dev
+   pnpm run dev
    ```
    This will compile TypeScript files and watch for changes.
 
@@ -130,7 +130,7 @@ src/
 
 ### Building for Production
 ```bash
-npm run build
+pnpm run build
 ```
 
 This will create `main.js` in the root directory, which can be used for distribution.
@@ -142,12 +142,12 @@ Quick starting guide for new plugin devs:
 - Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
 - Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
 - Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `main.ts` to `main.js`.
+- Install NodeJS and pnpm (`npm install -g pnpm`), then run `pnpm install` in the command line under your repo folder.
+- Run `pnpm run dev` to compile your plugin from `main.ts` to `main.js`.
 - Make changes to `main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
 - Reload Obsidian to load the new version of your plugin.
 - Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+- For updates to the Obsidian API run `pnpm update` in the command line under your repo folder.
 
 ## Releasing new releases
 
@@ -157,7 +157,7 @@ Quick starting guide for new plugin devs:
 - Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
 - Publish the release.
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
+> You can simplify the version bump process by running `pnpm version patch`, `pnpm version minor` or `pnpm version major` after updating `minAppVersion` manually in `manifest.json`.
 > The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
 
 ## Adding your plugin to the community plugin list
@@ -174,7 +174,7 @@ For manual installation (e.g., for testing before release):
 
 1. Build the plugin:
    ```bash
-   npm run build
+   pnpm run build
    ```
 
 2. Copy the following files to your vault:
@@ -195,6 +195,10 @@ For manual installation (e.g., for testing before release):
 To use eslint with this project:
 
 1. Install eslint globally:
+   ```bash
+   pnpm add -g eslint
+   ```
+   Or using npm:
    ```bash
    npm install -g eslint
    ```
