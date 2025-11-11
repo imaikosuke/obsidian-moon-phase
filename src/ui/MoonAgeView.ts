@@ -1,6 +1,7 @@
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { calculateMoonAge } from '../utils/moonCalculation';
 import { getPhaseEmoji, getPhaseName } from '../utils/moonPhaseUtils';
+import { t } from '../utils/i18n';
 
 export const MOON_AGE_VIEW_TYPE = 'moon-age-view';
 
@@ -16,7 +17,7 @@ export class MoonAgeView extends ItemView {
 	}
 
 	getDisplayText(): string {
-		return 'Moon Age';
+		return t('view.name');
 	}
 
 	getIcon(): string {
@@ -64,8 +65,8 @@ export class MoonAgeView extends ItemView {
 		const infoEl = contentEl.createDiv('moon-phase-info');
 		infoEl.style.textAlign = 'center';
 		infoEl.style.padding = '10px';
-		infoEl.createEl('p', { text: `Age: ${moonInfo.age} days` });
-		infoEl.createEl('p', { text: `Illumination: ${moonInfo.illumination}%` });
+		infoEl.createEl('p', { text: `${t('modal.age')}: ${moonInfo.age} days` });
+		infoEl.createEl('p', { text: `${t('modal.illumination')}: ${moonInfo.illumination}%` });
 	}
 
 }
