@@ -234,23 +234,6 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 
 		containerEl.createEl('h2', { text: t('settings.title', this.plugin.settings.language) });
 
-		// 言語選択
-		new Setting(containerEl)
-			.setName(t('settings.language', this.plugin.settings.language))
-			.setDesc(t('settings.language-desc', this.plugin.settings.language))
-			.addDropdown(dropdown => {
-				dropdown.addOption('auto', t('settings.language-auto', this.plugin.settings.language));
-				dropdown.addOption('ja', '日本語');
-				dropdown.addOption('en', 'English');
-				dropdown.setValue(this.plugin.settings.language);
-				dropdown.onChange(async (value) => {
-					this.plugin.settings.language = value as 'auto' | 'ja' | 'en';
-					await this.plugin.saveData(this.plugin.settings);
-					// 設定画面を再描画して言語を反映
-					this.display();
-				});
-			});
-
 		// ステータスバー表示のON/OFF
 		new Setting(containerEl)
 			.setName(t('settings.show-status-bar', this.plugin.settings.language))
@@ -286,6 +269,23 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 					this.plugin.updateStatusBar();
 					this.plugin.updateAllViews();
 				}));
+
+		// 言語選択
+		new Setting(containerEl)
+			.setName(t('settings.language', this.plugin.settings.language))
+			.setDesc(t('settings.language-desc', this.plugin.settings.language))
+			.addDropdown(dropdown => {
+				dropdown.addOption('auto', t('settings.language-auto', this.plugin.settings.language));
+				dropdown.addOption('ja', '日本語');
+				dropdown.addOption('en', 'English');
+				dropdown.setValue(this.plugin.settings.language);
+				dropdown.onChange(async (value) => {
+					this.plugin.settings.language = value as 'auto' | 'ja' | 'en';
+					await this.plugin.saveData(this.plugin.settings);
+					// 設定画面を再描画して言語を反映
+					this.display();
+				});
+			});
 
 		// タイムゾーン選択
 		new Setting(containerEl)
