@@ -100,8 +100,6 @@ function moonPhaseAngle(jd: number): number {
 	const L0 = (280.4665 + 36000.7698 * T) % 360;
 	// 月の平均黄経（度）
 	const L = (218.3165 + 481267.8813 * T) % 360;
-	// 月の平均近点角（度）
-	const M = (134.9634 + 477198.8675 * T) % 360;
 
 	// 位相角（度）
 	const phaseAngle = (L - L0 - 180) % 360;

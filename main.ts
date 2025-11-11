@@ -1,6 +1,6 @@
 import { App, Modal, Plugin, PluginSettingTab, Setting, WorkspaceLeaf } from 'obsidian';
 import { calculateMoonAge } from './src/utils/moonCalculation';
-import { MoonAgeInfo, MoonPhase } from './src/types';
+import { MoonAgeInfo } from './src/types';
 import { getPhaseEmoji, getPhaseName } from './src/utils/moonPhaseUtils';
 import { MoonAgeView, MOON_AGE_VIEW_TYPE } from './src/ui/MoonAgeView';
 import { MoonPhasePluginSettings, DEFAULT_SETTINGS, TIMEZONES, getTimezoneInfo } from './src/settings';
