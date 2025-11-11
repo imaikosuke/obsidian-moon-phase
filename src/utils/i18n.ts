@@ -31,26 +31,21 @@ export type TranslationKey =
 	| 'view.name'
 	| 'timezone.system-default'
 	| 'timezone.japan'
-	| 'timezone.us-eastern'
-	| 'timezone.us-central'
-	| 'timezone.us-mountain'
-	| 'timezone.us-pacific'
+	| 'timezone.us'
 	| 'timezone.uk'
 	| 'timezone.germany'
 	| 'timezone.france'
-	| 'timezone.australia-sydney'
-	| 'timezone.australia-melbourne'
+	| 'timezone.australia'
 	| 'timezone.china'
 	| 'timezone.india'
 	| 'timezone.brazil'
-	| 'timezone.canada-toronto'
-	| 'timezone.canada-vancouver'
+	| 'timezone.canada'
 	| 'timezone.mexico'
 	| 'timezone.korea'
 	| 'timezone.singapore'
 	| 'timezone.new-zealand'
 	| 'timezone.south-africa'
-	| 'timezone.russia-moscow'
+	| 'timezone.russia'
 	| 'settings.language'
 	| 'settings.language-desc'
 	| 'settings.language-auto';
@@ -82,26 +77,21 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'view.name': '月齢',
 		'timezone.system-default': 'システムデフォルト',
 		'timezone.japan': '日本',
-		'timezone.us-eastern': '米国東部',
-		'timezone.us-central': '米国中部',
-		'timezone.us-mountain': '米国山岳部',
-		'timezone.us-pacific': '米国太平洋',
+		'timezone.us': '米国',
 		'timezone.uk': 'イギリス',
 		'timezone.germany': 'ドイツ',
 		'timezone.france': 'フランス',
-		'timezone.australia-sydney': 'オーストラリア（シドニー）',
-		'timezone.australia-melbourne': 'オーストラリア（メルボルン）',
+		'timezone.australia': 'オーストラリア',
 		'timezone.china': '中国',
 		'timezone.india': 'インド',
-		'timezone.brazil': 'ブラジル（サンパウロ）',
-		'timezone.canada-toronto': 'カナダ（トロント）',
-		'timezone.canada-vancouver': 'カナダ（バンクーバー）',
+		'timezone.brazil': 'ブラジル',
+		'timezone.canada': 'カナダ',
 		'timezone.mexico': 'メキシコ',
 		'timezone.korea': '韓国',
 		'timezone.singapore': 'シンガポール',
 		'timezone.new-zealand': 'ニュージーランド',
 		'timezone.south-africa': '南アフリカ',
-		'timezone.russia-moscow': 'ロシア（モスクワ）',
+		'timezone.russia': 'ロシア',
 		'settings.language': '言語',
 		'settings.language-desc': 'プラグインの表示言語を選択してください',
 		'settings.language-auto': '自動（Obsidianの設定に従う）'
@@ -129,26 +119,21 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'view.name': 'Moon Age',
 		'timezone.system-default': 'System Default',
 		'timezone.japan': 'Japan',
-		'timezone.us-eastern': 'US Eastern',
-		'timezone.us-central': 'US Central',
-		'timezone.us-mountain': 'US Mountain',
-		'timezone.us-pacific': 'US Pacific',
+		'timezone.us': 'United States',
 		'timezone.uk': 'United Kingdom',
 		'timezone.germany': 'Germany',
 		'timezone.france': 'France',
-		'timezone.australia-sydney': 'Australia (Sydney)',
-		'timezone.australia-melbourne': 'Australia (Melbourne)',
+		'timezone.australia': 'Australia',
 		'timezone.china': 'China',
 		'timezone.india': 'India',
-		'timezone.brazil': 'Brazil (São Paulo)',
-		'timezone.canada-toronto': 'Canada (Toronto)',
-		'timezone.canada-vancouver': 'Canada (Vancouver)',
+		'timezone.brazil': 'Brazil',
+		'timezone.canada': 'Canada',
 		'timezone.mexico': 'Mexico',
 		'timezone.korea': 'Korea',
 		'timezone.singapore': 'Singapore',
 		'timezone.new-zealand': 'New Zealand',
 		'timezone.south-africa': 'South Africa',
-		'timezone.russia-moscow': 'Russia (Moscow)',
+		'timezone.russia': 'Russia',
 		'settings.language': 'Language',
 		'settings.language-desc': 'Select the display language for the plugin',
 		'settings.language-auto': 'Auto (Follow Obsidian settings)'
