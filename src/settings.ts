@@ -18,6 +18,8 @@ export interface MoonPhasePluginSettings {
 	showPercentage: boolean;
 	/** 選択されたタイムゾーンID（'system'の場合はシステムデフォルト） */
 	timezone: string;
+	/** 言語設定（'auto'の場合はObsidianの言語設定に従う） */
+	language: 'auto' | 'ja' | 'en';
 }
 
 /**
@@ -26,7 +28,8 @@ export interface MoonPhasePluginSettings {
 export const DEFAULT_SETTINGS: MoonPhasePluginSettings = {
 	showStatusBar: true,
 	showPercentage: true,
-	timezone: 'system'
+	timezone: 'system',
+	language: 'auto'
 };
 
 /**

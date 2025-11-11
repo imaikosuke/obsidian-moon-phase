@@ -22,7 +22,7 @@ export class MoonAgeView extends ItemView {
 	}
 
 	getDisplayText(): string {
-		return t('view.name');
+		return t('view.name', this.settings.language);
 	}
 
 	getIcon(): string {

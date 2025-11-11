@@ -28,7 +28,10 @@ export type TranslationKey =
 	| 'modal.hemisphere-north'
 	| 'modal.hemisphere-south'
 	| 'view.name'
-	| 'timezone.system-default';
+	| 'timezone.system-default'
+	| 'settings.language'
+	| 'settings.language-desc'
+	| 'settings.language-auto';
 
 /**
  * 翻訳テキスト
@@ -54,7 +57,10 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'modal.hemisphere-north': '北半球',
 		'modal.hemisphere-south': '南半球',
 		'view.name': '月齢',
-		'timezone.system-default': 'システムデフォルト'
+		'timezone.system-default': 'システムデフォルト',
+		'settings.language': '言語',
+		'settings.language-desc': 'プラグインの表示言語を選択してください',
+		'settings.language-auto': '自動（Obsidianの設定に従う）'
 	},
 	en: {
 		'command.show-moon-age': 'Show moon age',
@@ -76,21 +82,31 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'modal.hemisphere-north': 'Northern Hemisphere',
 		'modal.hemisphere-south': 'Southern Hemisphere',
 		'view.name': 'Moon Age',
-		'timezone.system-default': 'System Default'
+		'timezone.system-default': 'System Default',
+		'settings.language': 'Language',
+		'settings.language-desc': 'Select the display language for the plugin',
+		'settings.language-auto': 'Auto (Follow Obsidian settings)'
 	}
 };
 
 /**
  * 現在の言語を取得
  * Obsidianの現在の言語（ロケール）は moment.locale() で取得できます
+ * @param lang 言語設定（'auto'の場合はObsidianの設定に従う、省略時は自動検出）
  */
-export function getCurrentLanguage(): Language {
+export function getCurrentLanguage(lang?: 'auto' | 'ja' | 'en'): Language {
+	// 設定で言語が指定されている場合（'auto'以外）
+	if (lang && lang !== 'auto') {
+		return lang;
+	}
+	
+	// 'auto'の場合はObsidianの言語設定を使用
 	try {
 		// Obsidianの現在の言語を取得
 		const locale = moment.locale();
-		const lang = locale.split('-')[0].toLowerCase();
+		const detectedLang = locale.split('-')[0].toLowerCase();
 		
-		if (lang === 'ja') {
+		if (detectedLang === 'ja') {
 			return 'ja';
 		}
 	} catch (e) {
@@ -105,11 +121,11 @@ export function getCurrentLanguage(): Language {
 /**
  * 翻訳テキストを取得
  * @param key 翻訳キー
- * @param lang 言語（省略時は自動検出）
+ * @param lang 言語設定（'auto'の場合はObsidianの設定に従う、省略時は自動検出）
  * @returns 翻訳されたテキスト
  */
-export function t(key: TranslationKey, lang?: Language): string {
-	const currentLang = lang || getCurrentLanguage();
+export function t(key: TranslationKey, lang?: 'auto' | 'ja' | 'en'): string {
+	const currentLang = getCurrentLanguage(lang);
 	return translations[currentLang][key] || translations.en[key];
 }
 

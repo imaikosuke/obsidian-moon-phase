@@ -15,7 +15,7 @@ export default class MoonPhasePlugin extends Plugin {
 		await this.loadSettings();
 
 		// リボンアイコンを追加（左サイドバー）
-		this.addRibbonIcon('moon', t('ribbon.tooltip'), (_evt: MouseEvent) => {
+		this.addRibbonIcon('moon', t('ribbon.tooltip', this.settings.language), (_evt: MouseEvent) => {
 			const date = getDateInTimezone(this.settings.timezone);
 			const moonInfo = calculateMoonAge(date);
 			new MoonAgeModal(this.app, moonInfo, this.settings).open();
@@ -37,7 +37,7 @@ export default class MoonPhasePlugin extends Plugin {
 		// 月齢を表示するコマンド
 		this.addCommand({
 			id: 'show-moon-age',
-			name: t('command.show-moon-age'),
+			name: t('command.show-moon-age', this.settings.language),
 			callback: () => {
 				const date = getDateInTimezone(this.settings.timezone);
 				const moonInfo = calculateMoonAge(date);
@@ -48,7 +48,7 @@ export default class MoonPhasePlugin extends Plugin {
 		// 月齢ビューを開くコマンド
 		this.addCommand({
 			id: 'open-moon-age-view',
-			name: t('command.open-moon-age-view'),
+			name: t('command.open-moon-age-view', this.settings.language),
 			callback: () => {
 				this.activateView();
 			}
@@ -143,7 +143,7 @@ class MoonAgeModal extends Modal {
 		const emoji = getPhaseEmoji(this.moonInfo.phase);
 		const phaseName = getPhaseName(this.moonInfo.phase);
 
-		contentEl.createEl('h2', { text: t('modal.title') });
+		contentEl.createEl('h2', { text: t('modal.title', this.settings.language) });
 
 		const infoDiv = contentEl.createDiv();
 		infoDiv.createEl('p', { 
@@ -151,28 +151,28 @@ class MoonAgeModal extends Modal {
 			cls: 'moon-phase-emoji-text'
 		});
 		infoDiv.createEl('p', { 
-			text: `${t('modal.age')}: ${this.moonInfo.age} days` 
+			text: `${t('modal.age', this.settings.language)}: ${this.moonInfo.age} days` 
 		});
 		infoDiv.createEl('p', { 
-			text: `${t('modal.illumination')}: ${this.moonInfo.illumination}%` 
+			text: `${t('modal.illumination', this.settings.language)}: ${this.moonInfo.illumination}%` 
 		});
 		// タイムゾーンを考慮した日時表示
 		const nextNewMoonStr = formatDateInTimezone(this.moonInfo.nextNewMoon, this.settings.timezone);
 		const nextFullMoonStr = formatDateInTimezone(this.moonInfo.nextFullMoon, this.settings.timezone);
 		
 		infoDiv.createEl('p', { 
-			text: `${t('modal.next-new-moon')}: ${nextNewMoonStr}` 
+			text: `${t('modal.next-new-moon', this.settings.language)}: ${nextNewMoonStr}` 
 		});
 		infoDiv.createEl('p', { 
-			text: `${t('modal.next-full-moon')}: ${nextFullMoonStr}` 
+			text: `${t('modal.next-full-moon', this.settings.language)}: ${nextFullMoonStr}` 
 		});
 
 		// 半球情報を表示
 		const tzInfo = getTimezoneInfo(this.settings.timezone);
 		if (tzInfo) {
-			const hemisphere = tzInfo.hemisphere === 'north' ? t('modal.hemisphere-north') : t('modal.hemisphere-south');
+			const hemisphere = tzInfo.hemisphere === 'north' ? t('modal.hemisphere-north', this.settings.language) : t('modal.hemisphere-south', this.settings.language);
 			infoDiv.createEl('p', { 
-				text: `${t('modal.hemisphere')}: ${hemisphere}` 
+				text: `${t('modal.hemisphere', this.settings.language)}: ${hemisphere}` 
 			});
 		}
 	}
@@ -196,12 +196,29 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 
 		containerEl.empty();
 
-		containerEl.createEl('h2', { text: t('settings.title') });
+		containerEl.createEl('h2', { text: t('settings.title', this.plugin.settings.language) });
+
+		// 言語選択
+		new Setting(containerEl)
+			.setName(t('settings.language', this.plugin.settings.language))
+			.setDesc(t('settings.language-desc', this.plugin.settings.language))
+			.addDropdown(dropdown => {
+				dropdown.addOption('auto', t('settings.language-auto', this.plugin.settings.language));
+				dropdown.addOption('ja', '日本語');
+				dropdown.addOption('en', 'English');
+				dropdown.setValue(this.plugin.settings.language);
+				dropdown.onChange(async (value) => {
+					this.plugin.settings.language = value as 'auto' | 'ja' | 'en';
+					await this.plugin.saveData(this.plugin.settings);
+					// 設定画面を再描画して言語を反映
+					this.display();
+				});
+			});
 
 		// ステータスバー表示のON/OFF
 		new Setting(containerEl)
-			.setName(t('settings.show-status-bar'))
-			.setDesc(t('settings.show-status-bar-desc'))
+			.setName(t('settings.show-status-bar', this.plugin.settings.language))
+			.setDesc(t('settings.show-status-bar-desc', this.plugin.settings.language))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showStatusBar)
 				.onChange(async (value) => {
@@ -223,8 +240,8 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 
 		// パーセンテージ表示のON/OFF
 		new Setting(containerEl)
-			.setName(t('settings.show-percentage'))
-			.setDesc(t('settings.show-percentage-desc'))
+			.setName(t('settings.show-percentage', this.plugin.settings.language))
+			.setDesc(t('settings.show-percentage-desc', this.plugin.settings.language))
 			.addToggle(toggle => toggle
 				.setValue(this.plugin.settings.showPercentage)
 				.onChange(async (value) => {
@@ -236,12 +253,12 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 
 		// タイムゾーン選択
 		new Setting(containerEl)
-			.setName(t('settings.timezone'))
-			.setDesc(t('settings.timezone-desc'))
+			.setName(t('settings.timezone', this.plugin.settings.language))
+			.setDesc(t('settings.timezone-desc', this.plugin.settings.language))
 			.addDropdown(dropdown => {
 				TIMEZONES.forEach(tz => {
 					// システムデフォルトの表示名を多言語対応
-					const displayName = tz.id === 'system' ? t('timezone.system-default') : tz.name;
+					const displayName = tz.id === 'system' ? t('timezone.system-default', this.plugin.settings.language) : tz.name;
 					dropdown.addOption(tz.id, displayName);
 				});
 				dropdown.setValue(this.plugin.settings.timezone);
