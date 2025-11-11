@@ -30,6 +30,27 @@ export type TranslationKey =
 	| 'modal.hemisphere-south'
 	| 'view.name'
 	| 'timezone.system-default'
+	| 'timezone.japan'
+	| 'timezone.us-eastern'
+	| 'timezone.us-central'
+	| 'timezone.us-mountain'
+	| 'timezone.us-pacific'
+	| 'timezone.uk'
+	| 'timezone.germany'
+	| 'timezone.france'
+	| 'timezone.australia-sydney'
+	| 'timezone.australia-melbourne'
+	| 'timezone.china'
+	| 'timezone.india'
+	| 'timezone.brazil'
+	| 'timezone.canada-toronto'
+	| 'timezone.canada-vancouver'
+	| 'timezone.mexico'
+	| 'timezone.korea'
+	| 'timezone.singapore'
+	| 'timezone.new-zealand'
+	| 'timezone.south-africa'
+	| 'timezone.russia-moscow'
 	| 'settings.language'
 	| 'settings.language-desc'
 	| 'settings.language-auto';
@@ -60,6 +81,27 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'modal.hemisphere-south': '南半球',
 		'view.name': '月齢',
 		'timezone.system-default': 'システムデフォルト',
+		'timezone.japan': '日本',
+		'timezone.us-eastern': '米国東部',
+		'timezone.us-central': '米国中部',
+		'timezone.us-mountain': '米国山岳部',
+		'timezone.us-pacific': '米国太平洋',
+		'timezone.uk': 'イギリス',
+		'timezone.germany': 'ドイツ',
+		'timezone.france': 'フランス',
+		'timezone.australia-sydney': 'オーストラリア（シドニー）',
+		'timezone.australia-melbourne': 'オーストラリア（メルボルン）',
+		'timezone.china': '中国',
+		'timezone.india': 'インド',
+		'timezone.brazil': 'ブラジル（サンパウロ）',
+		'timezone.canada-toronto': 'カナダ（トロント）',
+		'timezone.canada-vancouver': 'カナダ（バンクーバー）',
+		'timezone.mexico': 'メキシコ',
+		'timezone.korea': '韓国',
+		'timezone.singapore': 'シンガポール',
+		'timezone.new-zealand': 'ニュージーランド',
+		'timezone.south-africa': '南アフリカ',
+		'timezone.russia-moscow': 'ロシア（モスクワ）',
 		'settings.language': '言語',
 		'settings.language-desc': 'プラグインの表示言語を選択してください',
 		'settings.language-auto': '自動（Obsidianの設定に従う）'
@@ -86,6 +128,27 @@ const translations: Record<Language, Record<TranslationKey, string>> = {
 		'modal.hemisphere-south': 'Southern Hemisphere',
 		'view.name': 'Moon Age',
 		'timezone.system-default': 'System Default',
+		'timezone.japan': 'Japan',
+		'timezone.us-eastern': 'US Eastern',
+		'timezone.us-central': 'US Central',
+		'timezone.us-mountain': 'US Mountain',
+		'timezone.us-pacific': 'US Pacific',
+		'timezone.uk': 'United Kingdom',
+		'timezone.germany': 'Germany',
+		'timezone.france': 'France',
+		'timezone.australia-sydney': 'Australia (Sydney)',
+		'timezone.australia-melbourne': 'Australia (Melbourne)',
+		'timezone.china': 'China',
+		'timezone.india': 'India',
+		'timezone.brazil': 'Brazil (São Paulo)',
+		'timezone.canada-toronto': 'Canada (Toronto)',
+		'timezone.canada-vancouver': 'Canada (Vancouver)',
+		'timezone.mexico': 'Mexico',
+		'timezone.korea': 'Korea',
+		'timezone.singapore': 'Singapore',
+		'timezone.new-zealand': 'New Zealand',
+		'timezone.south-africa': 'South Africa',
+		'timezone.russia-moscow': 'Russia (Moscow)',
 		'settings.language': 'Language',
 		'settings.language-desc': 'Select the display language for the plugin',
 		'settings.language-auto': 'Auto (Follow Obsidian settings)'
@@ -130,5 +193,28 @@ export function getCurrentLanguage(lang?: 'auto' | 'ja' | 'en'): Language {
 export function t(key: TranslationKey, lang?: 'auto' | 'ja' | 'en'): string {
 	const currentLang = getCurrentLanguage(lang);
 	return translations[currentLang][key] || translations.en[key];
+}
+
+/**
+ * タイムゾーン名を取得（言語設定に応じて日本語または英語を返す）
+ * @param timezoneId タイムゾーンID
+ * @param defaultName デフォルト名（翻訳が見つからない場合に使用）
+ * @param lang 言語設定（'auto'の場合はObsidianの設定に従う、省略時は自動検出）
+ * @returns タイムゾーン名
+ */
+export function getTimezoneName(timezoneId: string, defaultName: string, lang?: 'auto' | 'ja' | 'en'): string {
+	const translationKey = `timezone.${timezoneId}` as TranslationKey;
+	const currentLang = getCurrentLanguage(lang);
+	
+	// 翻訳が存在する場合はそれを使用
+	if (translations[currentLang][translationKey]) {
+		return translations[currentLang][translationKey];
+	}
+	if (translations.en[translationKey]) {
+		return translations.en[translationKey];
+	}
+	
+	// 翻訳が見つからない場合はデフォルト名を使用
+	return defaultName;
 }
 

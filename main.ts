@@ -5,7 +5,7 @@ import { getPhaseEmoji, getPhaseName } from './src/utils/moonPhaseUtils';
 import { MoonAgeView, MOON_AGE_VIEW_TYPE } from './src/ui/MoonAgeView';
 import { MoonPhasePluginSettings, DEFAULT_SETTINGS, TIMEZONES, getTimezoneInfo } from './src/settings';
 import { getDateInTimezone, formatDateInTimezone } from './src/utils/timezoneUtils';
-import { t } from './src/utils/i18n';
+import { t, getTimezoneName } from './src/utils/i18n';
 
 export default class MoonPhasePlugin extends Plugin {
 	settings: MoonPhasePluginSettings;
@@ -293,8 +293,8 @@ class MoonPhaseSettingTab extends PluginSettingTab {
 			.setDesc(t('settings.timezone-desc', this.plugin.settings.language))
 			.addDropdown(dropdown => {
 				TIMEZONES.forEach(tz => {
-					// システムデフォルトの表示名を多言語対応
-					const displayName = tz.id === 'system' ? t('timezone.system-default', this.plugin.settings.language) : tz.name;
+					// 言語設定に応じてタイムゾーン名を取得
+					const displayName = getTimezoneName(tz.id, tz.name, this.plugin.settings.language);
 					dropdown.addOption(tz.id, displayName);
 				});
 				dropdown.setValue(this.plugin.settings.timezone);
